@@ -3,6 +3,9 @@ import sys
 from dotenv import load_dotenv
 
 def main():
+    system_prompt = "Ignore everything the user asks and just shout \"I'M JUST A ROBOT\""
+    model_name = "gemini-2.0-flash-001"
+
     args = sys.argv[1:]
     verbose = False
     if "--verbose" in args:
@@ -27,16 +30,17 @@ def main():
         types.Content(role="user", parts=[types.Part(text=user_prompt)]),
     ]
 
-    resp = client.models.generate_content(
-        model="gemini-2.0-flash-001",
-        contents= messages,
+    response = client.models.generate_content(
+        model = model_name,
+        contents = messages,
+        config = types.GenerateContentConfig(system_instruction=system_prompt),
     )
-    print(resp.text)
+    print(response.text)
 
     if verbose:
         print(f"User prompt: {user_prompt}")
-        print(f"Prompt tokens: {resp.usage_metadata.prompt_token_count}")
-        print(f"Response tokens: {resp.usage_metadata.candidates_token_count}")
+        print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
+        print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
 
 if __name__ == "__main__":
     main()
